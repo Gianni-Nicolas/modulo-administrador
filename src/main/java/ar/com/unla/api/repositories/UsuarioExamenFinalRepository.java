@@ -20,9 +20,9 @@ public interface UsuarioExamenFinalRepository extends JpaRepository<UsuarioExame
 
     @Query("SELECT uef FROM UsuarioExamenFinal uef "
             + "INNER JOIN uef.usuario u "
-            + "INNER JOIN u.rol r "
             + "INNER JOIN uef.examenFinal ef "
             + "INNER JOIN ef.materia m "
+            + "INNER JOIN m.profesor p "
             + "INNER JOIN m.turno t "
             + "WHERE m.id = :idMateria AND u.id = :idUsuario "
             + "AND LOWER(t.descripcion) = :descripcionTurno")
