@@ -77,6 +77,7 @@ public class MateriaService {
     public Materia updateSubjects(long idMateria, MateriaDTO materiaDTO) {
 
         Materia materiaActual = findById(idMateria);
+        Usuario profesorAnterior = materiaActual.getProfesor();
 
         //Si la materia posee alumnos inscriptos el nombre, el turno, el año o el cuatrimestre de
         // la materia no pueden cambiar
@@ -119,6 +120,17 @@ public class MateriaService {
             if (usuarioMateria.getId() != null) {
                 usuarioMateriaService.delete(usuarioMateria.getId());
             }
+        } else {
+            UsuarioMateria usuarioMateria =
+                    usuarioMateriaService.findByUserAndSubject(materiaActual.getId(),
+                            materiaActual.getProfesor().getId(),
+                            materiaActual.getTurno().getDescripcion().toLowerCase());
+            if (usuarioMateria.getId() == null) {
+                usuarioMateriaService
+                        .create(new UsuarioMateriaDTO(materiaActual.getId(),
+                                profesorAnterior.getId(), 0f,
+                                0f));
+            }
         }
 
         materiaActual.setNombre(materiaDTO.getNombre());
@@ -134,10 +146,11 @@ public class MateriaService {
 
         Materia materia = materiaRepository.save(materiaActual);
 
-        //Se agrega la nueva relacion del nuevo profesor con esta materia
-        usuarioMateriaService
-                .create(new UsuarioMateriaDTO(materia.getId(), profesor.getId(), 0f, 0f));
-
+        if (!profesorAnterior.getId().equals(materiaDTO.getIdProfesor())) {
+            //Se agrega la nueva relacion del nuevo profesor con esta materia
+            usuarioMateriaService
+                    .create(new UsuarioMateriaDTO(materia.getId(), profesor.getId(), 0f, 0f));
+        }
         return materia;
     }
 
