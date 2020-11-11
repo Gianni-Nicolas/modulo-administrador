@@ -166,7 +166,13 @@ public class MateriaService {
 
     public void delete(Long id) {
         try {
-            findById(id);
+            Materia materia = findById(id);
+
+            UsuarioMateria usuarioMateria = usuarioMateriaService
+                    .findByUserAndSubject(materia.getId(), materia.getProfesor().getId(),
+                            materia.getTurno().getDescripcion());
+            usuarioMateriaService.delete(usuarioMateria.getId());
+
             materiaRepository.deleteById(id);
         } catch (RuntimeException e) {
             if (e instanceof NotFoundApiException) {

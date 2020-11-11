@@ -129,7 +129,15 @@ public class ExamenFinalService {
 
     public void delete(Long id) {
         try {
-            findById(id);
+            ExamenFinal examenFinal = findById(id);
+
+            UsuarioExamenFinal usuarioExamenFinal = usuarioExamenFinalService
+                    .findUsuarioExamenFinal(examenFinal.getMateria().getId(),
+                            examenFinal.getMateria().getProfesor().getId(),
+                            examenFinal.getMateria().getTurno().getDescripcion());
+
+            usuarioExamenFinalService.delete(usuarioExamenFinal.getId());
+
             examenFinalRepository.deleteById(id);
 
         } catch (RuntimeException e) {
