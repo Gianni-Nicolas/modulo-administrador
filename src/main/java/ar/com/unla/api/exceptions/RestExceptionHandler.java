@@ -76,9 +76,19 @@ public abstract class RestExceptionHandler extends ResponseEntityExceptionHandle
                     (org.hibernate.exception.ConstraintViolationException)
                             ex.getCause();
 
-            messages =
-                    Collections.singletonList(
-                            "Error SQL: " + constraintViolationException.getCause().getMessage());
+            if (constraintViolationException.getCause().getMessage().contains("Duplicate") &&
+                    constraintViolationException.getCause().getMessage().contains("@")) {
+
+                messages = Collections.singletonList(
+                        "Email no disponible. Ya existe un usuario con el email indicado.");
+
+            } else {
+
+                messages =
+                        Collections.singletonList(
+                                "Error SQL: " + constraintViolationException.getCause()
+                                        .getMessage());
+            }
 
             applicationResponse =
                     this.getApplicationResponse(CommonsErrorConstants.REQUEST_VALIDATION_ERROR_CODE,
