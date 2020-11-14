@@ -6,6 +6,7 @@ import ar.com.unla.api.dtos.response.AlumnoMateriaDTO;
 import ar.com.unla.api.dtos.response.AlumnosMateriaDTO;
 import ar.com.unla.api.dtos.response.MateriasInscriptasDTO;
 import ar.com.unla.api.exceptions.NotFoundApiException;
+import ar.com.unla.api.exceptions.TransactionBlockedException;
 import ar.com.unla.api.models.database.Materia;
 import ar.com.unla.api.models.database.Usuario;
 import ar.com.unla.api.models.database.UsuarioMateria;
@@ -221,8 +222,14 @@ public class UsuarioMateriaService {
     }
 
     public void delete(Long id) {
-        findById(id);
-        usuarioMateriaRepository.deleteById(id);
+        UsuarioMateria usuarioMateria = findById(id);
+        if (usuarioMateria.getMateria().getPeriodoInscripcion().getFechaHasta()
+                .isBefore(LocalDate.now())) {
+            throw new TransactionBlockedException(
+                    "El periodo de inscripción cerró, no es posible darse de baja.");
+        } else {
+            usuarioMateriaRepository.deleteById(id);
+        }
     }
 
 }

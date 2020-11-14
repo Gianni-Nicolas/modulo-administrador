@@ -6,6 +6,7 @@ import ar.com.unla.api.dtos.response.AlumnoFinalDTO;
 import ar.com.unla.api.dtos.response.AlumnosFinalDTO;
 import ar.com.unla.api.dtos.response.FinalesInscriptosDTO;
 import ar.com.unla.api.exceptions.NotFoundApiException;
+import ar.com.unla.api.exceptions.TransactionBlockedException;
 import ar.com.unla.api.models.database.ExamenFinal;
 import ar.com.unla.api.models.database.Usuario;
 import ar.com.unla.api.models.database.UsuarioExamenFinal;
@@ -237,7 +238,14 @@ public class UsuarioExamenFinalService {
     }
 
     public void delete(Long id) {
-        findById(id);
-        usuarioExamenFinalRepository.deleteById(id);
+        UsuarioExamenFinal usuarioExamenFinal = findById(id);
+
+        if (usuarioExamenFinal.getExamenFinal().getPeriodoInscripcion().getFechaHasta()
+                .isBefore(LocalDate.now())) {
+            throw new TransactionBlockedException(
+                    "El periodo de inscripción cerró, no es posible darse de baja.");
+        } else {
+            usuarioExamenFinalRepository.deleteById(id);
+        }
     }
 }
