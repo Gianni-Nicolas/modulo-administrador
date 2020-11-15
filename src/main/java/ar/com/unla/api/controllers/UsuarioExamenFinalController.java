@@ -1,9 +1,11 @@
 package ar.com.unla.api.controllers;
 
+import ar.com.unla.api.dtos.response.AlumnosFinalFlagDTO;
 import ar.com.unla.api.dtos.response.FinalesInscriptosDTO;
 import ar.com.unla.api.models.database.UsuarioExamenFinal;
 import ar.com.unla.api.models.response.ApplicationResponse;
 import ar.com.unla.api.models.response.ErrorResponse;
+import ar.com.unla.api.models.swagger.usuarioexamenfinal.SwaggerAlumnosFinalOk;
 import ar.com.unla.api.models.swagger.usuarioexamenfinal.SwaggerUsuarioExamenFinalInscriptoOK;
 import ar.com.unla.api.models.swagger.usuarioexamenfinal.SwaggerUsuarioFinalOk;
 import ar.com.unla.api.services.UsuarioExamenFinalService;
@@ -65,6 +67,29 @@ public class UsuarioExamenFinalController {
         return new ApplicationResponse<>(
                 usuarioExamenFinalService.findSubjectsAccordingRole(idUsuario),
                 null);
+    }
+
+    @GetMapping(path = "/alumnos")
+    @ApiOperation(value = "Se encarga de buscar una lista de alumnos relacionandolo con un examen"
+            + " final indicando con un flag si esta inscripto o no a dicho examen")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(code = 200, message = "Alumnos por examen final encontrados",
+                            response = SwaggerAlumnosFinalOk.class),
+                    @ApiResponse(code = 400, message = "Request incorrecta al buscar una lista de"
+                            + " alumnos por examen final", response = ErrorResponse.class),
+                    @ApiResponse(code = 500, message =
+                            "Error interno al buscar una lista de alumnos por examen final",
+                            response = ErrorResponse.class)
+            }
+    )
+    @ResponseStatus(HttpStatus.OK)
+    public ApplicationResponse<AlumnosFinalFlagDTO> getStudentsByFinalExam(
+            @RequestParam(name = "idMateria")
+            @NotNull(message = "El parámetro idMateria no esta informado.")
+            @ApiParam(required = true) Long idMateria) {
+        return new ApplicationResponse<>(
+                usuarioExamenFinalService.findUsersByFinalExamWithFlag(idMateria), null);
     }
 
     @PutMapping(path = "/calificaciones")

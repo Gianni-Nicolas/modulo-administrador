@@ -1,8 +1,10 @@
 package ar.com.unla.api.controllers;
 
+import ar.com.unla.api.dtos.response.AlumnosMateriaFlagDTO;
 import ar.com.unla.api.dtos.response.MateriasInscriptasDTO;
 import ar.com.unla.api.models.response.ApplicationResponse;
 import ar.com.unla.api.models.response.ErrorResponse;
+import ar.com.unla.api.models.swagger.usuariomateria.SwaggerAlumnosMateriaOK;
 import ar.com.unla.api.models.swagger.usuariomateria.SwaggerUsuarioMateriasInscriptasOK;
 import ar.com.unla.api.services.UsuarioMateriaService;
 import io.swagger.annotations.Api;
@@ -59,6 +61,31 @@ public class UsuarioMateriaController {
             @ApiParam(required = true) Long idUsuario) {
         return new ApplicationResponse<>(
                 usuarioMateriaService.findSubjectsAccordingRole(idUsuario), null);
+    }
+
+
+    @GetMapping(path = "/alumnos")
+    @ApiOperation(value = "Se encarga de buscar una lista de alumnos relacionansoloa a una "
+            + "materia indicando si esta inscripto o no a dicha materia")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(code = 200, message = "Alumnos por materia encontrados",
+                            response = SwaggerAlumnosMateriaOK.class),
+                    @ApiResponse(code = 400, message = "Request incorrecta al buscar una lista de"
+                            + " alumnos por materia", response = ErrorResponse.class),
+                    @ApiResponse(code = 500, message =
+                            "Error interno al buscar una lista de alumnos por materia",
+                            response = ErrorResponse.class)
+            }
+    )
+    @ResponseStatus(HttpStatus.OK)
+    public ApplicationResponse<AlumnosMateriaFlagDTO> getStudentsBySubject(
+            @RequestParam(name = "idMateria")
+            @NotNull(message = "El parámetro idMateria no esta informado.")
+            @ApiParam(required = true) Long idMateria) {
+        return new ApplicationResponse<>(
+                usuarioMateriaService.findStudentsBySubjectWithFlag(idMateria),
+                null);
     }
 
 

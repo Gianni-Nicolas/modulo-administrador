@@ -10,7 +10,11 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 
-    List<Usuario> findAllByOrderByApellidoAsc();
+    @Query("SELECT u FROM Usuario u "
+            + "INNER JOIN u.rol r "
+            + "INNER JOIN u.direccion d "
+            + "WHERE LOWER(r.descripcion) = 'alumno'")
+    List<Usuario> findStudentUsers();
 
     @Query("SELECT u FROM Usuario u "
             + "INNER JOIN u.rol r "

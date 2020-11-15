@@ -64,11 +64,15 @@ public class UsuarioService {
     }
 
     public List<Usuario> findAll() {
-        return usuarioRepository.findAllByOrderByApellidoAsc();
+        return usuarioRepository.findAll();
     }
 
     public List<Usuario> findAllTeachers() {
         return usuarioRepository.findTeacherUsers();
+    }
+
+    public List<Usuario> findAllStudents() {
+        return usuarioRepository.findStudentUsers();
     }
 
     public Usuario updateSensitiveData(Long id, DatosSensiblesUsuarioDTO datosSensiblesUsuarioDTO) {

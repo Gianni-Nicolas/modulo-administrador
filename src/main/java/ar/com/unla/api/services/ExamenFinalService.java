@@ -54,6 +54,12 @@ public class ExamenFinalService {
                         + "encontro el examen final indicado."));
     }
 
+    public ExamenFinal findBySubjects(Long idMateria, Long idTurno) {
+        return examenFinalRepository.findBySubject(idMateria, idTurno)
+                .orElseThrow(() -> new NotFoundApiException(
+                        "La materia indicada no tiene un examen final creado"));
+    }
+
     public List<ExamenFinal> findAll() {
         return examenFinalRepository.findAll();
     }

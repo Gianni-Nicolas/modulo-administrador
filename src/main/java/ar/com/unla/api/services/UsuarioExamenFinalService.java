@@ -3,11 +3,14 @@ package ar.com.unla.api.services;
 import ar.com.unla.api.constants.CommonsErrorConstants;
 import ar.com.unla.api.dtos.request.UsuarioExamenFinalDTO;
 import ar.com.unla.api.dtos.response.AlumnoFinalDTO;
+import ar.com.unla.api.dtos.response.AlumnoFinalFlagDTO;
 import ar.com.unla.api.dtos.response.AlumnosFinalDTO;
+import ar.com.unla.api.dtos.response.AlumnosFinalFlagDTO;
 import ar.com.unla.api.dtos.response.FinalesInscriptosDTO;
 import ar.com.unla.api.exceptions.NotFoundApiException;
 import ar.com.unla.api.exceptions.TransactionBlockedException;
 import ar.com.unla.api.models.database.ExamenFinal;
+import ar.com.unla.api.models.database.Materia;
 import ar.com.unla.api.models.database.Usuario;
 import ar.com.unla.api.models.database.UsuarioExamenFinal;
 import ar.com.unla.api.models.enums.RolesEnum;
@@ -104,6 +107,61 @@ public class UsuarioExamenFinalService {
         }
 
         return alumnos;
+    }
+
+    public AlumnosFinalFlagDTO findUsersByFinalExamWithFlag(Long idMateria) {
+        Materia materia = materiaService.findById(idMateria);
+
+        List<Usuario> alumnos = usuarioService.findAllStudents();
+
+        ExamenFinal examenFinal =
+                examenFinalService.findBySubjects(idMateria, materia.getTurno().getId());
+
+        AlumnosFinalFlagDTO alumnosFinalFlagDTO = new AlumnosFinalFlagDTO();
+        alumnosFinalFlagDTO.setExamenFinal(examenFinal);
+        alumnosFinalFlagDTO.setAlumnos(new ArrayList<>());
+
+        List<UsuarioExamenFinal> usuariosFinal =
+                usuarioExamenFinalRepository.findStudentsByFinalExam(idMateria);
+
+        if (usuariosFinal != null && !usuariosFinal.isEmpty()) {
+            for (UsuarioExamenFinal uex : usuariosFinal) {
+                AlumnoFinalFlagDTO alumno =
+                        new AlumnoFinalFlagDTO(uex.getUsuario(), true, uex.getCalificacion(),
+                                uex.getId());
+                alumnosFinalFlagDTO.getAlumnos().add(alumno);
+            }
+            boolean encontrado = false;
+            if (alumnos != null && !alumnos.isEmpty()) {
+                for (Usuario alumno : alumnos) {
+                    for (UsuarioExamenFinal uex : usuariosFinal) {
+                        if (alumno.getId().equals(uex.getUsuario().getId())) {
+                            encontrado = true;
+                            break;
+                        }
+                    }
+                    if (!encontrado) {
+                        AlumnoFinalFlagDTO alumnoNoInscripto =
+                                new AlumnoFinalFlagDTO(alumno, false, 0,
+                                        null);
+                        alumnosFinalFlagDTO.getAlumnos().add(alumnoNoInscripto);
+                    }
+                    encontrado = false;
+                }
+            }
+
+        } else {
+            if (alumnos != null && !alumnos.isEmpty()) {
+                for (Usuario alumno : alumnos) {
+                    AlumnoFinalFlagDTO alumnoNoInscripto =
+                            new AlumnoFinalFlagDTO(alumno, false, 0,
+                                    null);
+                    alumnosFinalFlagDTO.getAlumnos().add(alumnoNoInscripto);
+                }
+            }
+        }
+
+        return alumnosFinalFlagDTO;
     }
 
     public UsuarioExamenFinal findUsuarioExamenFinal(long idMateria, long idUsuario, String turno) {
