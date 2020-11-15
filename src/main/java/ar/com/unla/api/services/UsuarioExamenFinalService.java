@@ -113,7 +113,8 @@ public class UsuarioExamenFinalService {
 
         List<Usuario> alumnos = usuarioService.findAllStudents();
 
-        examenFinalService.findBySubjects(idMateria, materia.getTurno().getId());
+        ExamenFinal examenFinal =
+                examenFinalService.findBySubjects(idMateria, materia.getTurno().getId());
 
         List<AlumnoFinalFlagDTO> alumnosFinal = new ArrayList<>();
 
@@ -124,7 +125,7 @@ public class UsuarioExamenFinalService {
             for (UsuarioExamenFinal uex : usuariosFinal) {
                 AlumnoFinalFlagDTO alumno =
                         new AlumnoFinalFlagDTO(uex.getUsuario(), true, uex.getCalificacion(),
-                                uex.getId());
+                                uex.getId(), examenFinal.getId());
                 alumnosFinal.add(alumno);
             }
             boolean encontrado = false;
@@ -139,7 +140,7 @@ public class UsuarioExamenFinalService {
                     if (!encontrado) {
                         AlumnoFinalFlagDTO alumnoNoInscripto =
                                 new AlumnoFinalFlagDTO(alumno, false, 0,
-                                        null);
+                                        null, examenFinal.getId());
                         alumnosFinal.add(alumnoNoInscripto);
                     }
                     encontrado = false;
@@ -151,7 +152,7 @@ public class UsuarioExamenFinalService {
                 for (Usuario alumno : alumnos) {
                     AlumnoFinalFlagDTO alumnoNoInscripto =
                             new AlumnoFinalFlagDTO(alumno, false, 0,
-                                    null);
+                                    null, examenFinal.getId());
                     alumnosFinal.add(alumnoNoInscripto);
                 }
             }

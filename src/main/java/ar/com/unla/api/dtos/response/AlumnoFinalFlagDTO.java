@@ -22,4 +22,7 @@ public class AlumnoFinalFlagDTO {
 
     @ApiModelProperty(notes = "idInscripcion", position = 4)
     private Long idInscripcion;
+
+    @ApiModelProperty(notes = "idExamenFinal", position = 4)
+    private Long idExamenFinal;
 }
