@@ -142,8 +142,9 @@ public class ExamenFinalService {
                             examenFinal.getMateria().getProfesor().getId(),
                             examenFinal.getMateria().getTurno().getDescripcion());
 
-            usuarioExamenFinalService.delete(usuarioExamenFinal.getId());
-
+            if (usuarioExamenFinal.getId() != null) {
+                usuarioExamenFinalService.deleteAdmin(usuarioExamenFinal.getId());
+            }
             examenFinalRepository.deleteById(id);
 
         } catch (RuntimeException e) {

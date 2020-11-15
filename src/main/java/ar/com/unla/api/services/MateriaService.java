@@ -171,7 +171,10 @@ public class MateriaService {
             UsuarioMateria usuarioMateria = usuarioMateriaService
                     .findByUserAndSubject(materia.getId(), materia.getProfesor().getId(),
                             materia.getTurno().getDescripcion());
-            usuarioMateriaService.delete(usuarioMateria.getId());
+
+            if (usuarioMateria.getId() != null) {
+                usuarioMateriaService.deleteAdmin(usuarioMateria.getId());
+            }
 
             materiaRepository.deleteById(id);
         } catch (RuntimeException e) {
