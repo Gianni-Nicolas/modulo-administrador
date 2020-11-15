@@ -60,7 +60,7 @@ public class UsuarioExamenFinalController {
             @RequestParam(name = "idUsuario")
             @NotNull(message = "El parámetro idUsuario no esta informado.")
             @ApiParam(required = true) Long idUsuario,
-            @RequestParam(name = "idMateria")
+            @RequestParam(name = "idExamenFinal")
             @NotNull(message = "El parámetro idExamenFinal no esta informado.")
             @ApiParam(required = true) Long idExamenFinal) {
         return new ApplicationResponse<>(
