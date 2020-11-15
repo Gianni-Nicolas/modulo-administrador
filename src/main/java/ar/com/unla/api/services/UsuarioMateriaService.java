@@ -278,4 +278,9 @@ public class UsuarioMateriaService {
         }
     }
 
+    public void deleteAdmin(Long id) {
+        findById(id);
+        usuarioMateriaRepository.deleteById(id);
+    }
+
 }

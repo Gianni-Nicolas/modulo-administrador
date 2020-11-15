@@ -306,4 +306,10 @@ public class UsuarioExamenFinalService {
             usuarioExamenFinalRepository.deleteById(id);
         }
     }
+
+    public void deleteAdmin(Long id) {
+        findById(id);
+        usuarioExamenFinalRepository.deleteById(id);
+
+    }
 }

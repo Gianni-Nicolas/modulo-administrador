@@ -1,10 +1,13 @@
 package ar.com.unla.api.controllers;
 
+import ar.com.unla.api.dtos.request.UsuarioMateriaDTO;
 import ar.com.unla.api.dtos.response.AlumnosMateriaFlagDTO;
 import ar.com.unla.api.dtos.response.MateriasInscriptasDTO;
+import ar.com.unla.api.models.database.UsuarioMateria;
 import ar.com.unla.api.models.response.ApplicationResponse;
 import ar.com.unla.api.models.response.ErrorResponse;
 import ar.com.unla.api.models.swagger.usuariomateria.SwaggerAlumnosMateriaOK;
+import ar.com.unla.api.models.swagger.usuariomateria.SwaggerUsuarioMateriaOk;
 import ar.com.unla.api.models.swagger.usuariomateria.SwaggerUsuarioMateriasInscriptasOK;
 import ar.com.unla.api.services.UsuarioMateriaService;
 import io.swagger.annotations.Api;
@@ -20,6 +23,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -34,6 +38,31 @@ public class UsuarioMateriaController {
 
     @Autowired
     private UsuarioMateriaService usuarioMateriaService;
+
+    @PostMapping
+    @ApiOperation(value = "Se encarga de crear y persistir una relacion de usuario y materia")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(code = 201, message = "UsuarioMateria creado", response =
+                            SwaggerUsuarioMateriaOk.class),
+                    @ApiResponse(code = 400, message = "Request incorrecta al crear un "
+                            + "UsuarioMateria", response = ErrorResponse.class),
+                    @ApiResponse(code = 500, message = "Error interno al crear un "
+                            + "UsuarioMateria", response = ErrorResponse.class)
+            }
+    )
+    @ResponseStatus(HttpStatus.CREATED)
+    public ApplicationResponse<UsuarioMateria> create(
+            @RequestParam(name = "idUsuario")
+            @NotNull(message = "El parámetro idUsuario no esta informado.")
+            @ApiParam(required = true) Long idUsuario,
+            @RequestParam(name = "idMateria")
+            @NotNull(message = "El parámetro idMateria no esta informado.")
+            @ApiParam(required = true) Long idMateria) {
+        return new ApplicationResponse<>(
+                usuarioMateriaService.create(new UsuarioMateriaDTO(idUsuario, idMateria, 0, 0)),
+                null);
+    }
 
     @GetMapping(path = "/materias-inscriptas")
     @ApiOperation(value = "Se encarga de traer una lista de materias con un flag que indique en "
@@ -108,5 +137,26 @@ public class UsuarioMateriaController {
             @NotNull(message = "El parámetro idUsuarioMateria no esta informado.")
             @ApiParam(required = true) Long id) {
         usuarioMateriaService.delete(id);
+    }
+
+    @DeleteMapping("/admin")
+    @ApiOperation(value = "Se encarga eliminar una relacion de usuario y materia por su id")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(code = 204, message = "UsuarioMateria eliminado"),
+                    @ApiResponse(code = 400, message =
+                            "Request incorrecta al eliminar un UsuarioMateria por su id",
+                            response = ErrorResponse.class),
+                    @ApiResponse(code = 500, message =
+                            "Error al intentar eliminar un UsuarioMateria por su id",
+                            response = ErrorResponse.class)
+            }
+    )
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteAdmin(
+            @RequestParam(name = "idUsuarioMateria")
+            @NotNull(message = "El parámetro idUsuarioMateria no esta informado.")
+            @ApiParam(required = true) Long id) {
+        usuarioMateriaService.deleteAdmin(id);
     }
 }

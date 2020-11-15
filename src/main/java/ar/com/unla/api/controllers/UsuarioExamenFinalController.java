@@ -1,5 +1,6 @@
 package ar.com.unla.api.controllers;
 
+import ar.com.unla.api.dtos.request.UsuarioExamenFinalDTO;
 import ar.com.unla.api.dtos.response.AlumnosFinalFlagDTO;
 import ar.com.unla.api.dtos.response.FinalesInscriptosDTO;
 import ar.com.unla.api.models.database.UsuarioExamenFinal;
@@ -25,6 +26,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -40,6 +42,32 @@ public class UsuarioExamenFinalController {
 
     @Autowired
     private UsuarioExamenFinalService usuarioExamenFinalService;
+
+    @PostMapping
+    @ApiOperation(value = "Se encarga de crear y persistir una relacion de usuario y examen final")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(code = 201, message = "UsuarioExamenFinal creado", response =
+                            SwaggerUsuarioFinalOk.class),
+                    @ApiResponse(code = 400, message = "Request incorrecta al crear un "
+                            + "UsuarioExamenFinal", response = ErrorResponse.class),
+                    @ApiResponse(code = 500, message = "Error interno al crear un "
+                            + "UsuarioExamenFinal", response = ErrorResponse.class)
+            }
+    )
+    @ResponseStatus(HttpStatus.CREATED)
+    public ApplicationResponse<UsuarioExamenFinal> create(
+            @RequestParam(name = "idUsuario")
+            @NotNull(message = "El parámetro idUsuario no esta informado.")
+            @ApiParam(required = true) Long idUsuario,
+            @RequestParam(name = "idMateria")
+            @NotNull(message = "El parámetro idMateria no esta informado.")
+            @ApiParam(required = true) Long idMateria) {
+        return new ApplicationResponse<>(
+                usuarioExamenFinalService
+                        .create(new UsuarioExamenFinalDTO(idUsuario, idMateria, false, 0)),
+                null);
+    }
 
     @GetMapping(path = "/finales-inscriptos")
     @ApiOperation(value = "Se encarga de buscar una lista de examenes finales con un"
@@ -143,6 +171,27 @@ public class UsuarioExamenFinalController {
             @NotNull(message = "El parámetro idUsuarioExamenFinal no esta informado.")
             @ApiParam(required = true) Long id) {
         usuarioExamenFinalService.delete(id);
+    }
+
+    @DeleteMapping("/admin")
+    @ApiOperation(value = "Se encarga eliminar una relacion de usuario y examen final por su id")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(code = 204, message = "UsuarioExamenFinal eliminado"),
+                    @ApiResponse(code = 400, message =
+                            "Request incorrecta al eliminar un UsuarioExamenFinal por su id",
+                            response = ErrorResponse.class),
+                    @ApiResponse(code = 500, message =
+                            "Error al intentar eliminar un UsuarioExamenFinal por su id",
+                            response = ErrorResponse.class)
+            }
+    )
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteAdmin(
+            @RequestParam(name = "idUsuarioExamenFinal")
+            @NotNull(message = "El parámetro idUsuarioExamenFinal no esta informado.")
+            @ApiParam(required = true) Long id) {
+        usuarioExamenFinalService.deleteAdmin(id);
     }
 
 }
