@@ -60,7 +60,7 @@ public class UsuarioMateriaController {
             @NotNull(message = "El parámetro idMateria no esta informado.")
             @ApiParam(required = true) Long idMateria) {
         return new ApplicationResponse<>(
-                usuarioMateriaService.create(new UsuarioMateriaDTO(idUsuario, idMateria, 0, 0)),
+                usuarioMateriaService.create(new UsuarioMateriaDTO(idMateria, idUsuario, 0, 0)),
                 null);
     }
 

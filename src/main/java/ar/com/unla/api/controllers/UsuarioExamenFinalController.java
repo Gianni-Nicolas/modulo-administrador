@@ -61,11 +61,11 @@ public class UsuarioExamenFinalController {
             @NotNull(message = "El parámetro idUsuario no esta informado.")
             @ApiParam(required = true) Long idUsuario,
             @RequestParam(name = "idMateria")
-            @NotNull(message = "El parámetro idMateria no esta informado.")
-            @ApiParam(required = true) Long idMateria) {
+            @NotNull(message = "El parámetro idExamenFinal no esta informado.")
+            @ApiParam(required = true) Long idExamenFinal) {
         return new ApplicationResponse<>(
                 usuarioExamenFinalService
-                        .create(new UsuarioExamenFinalDTO(idUsuario, idMateria, false, 0)),
+                        .create(new UsuarioExamenFinalDTO(idExamenFinal, idUsuario, false, 0)),
                 null);
     }
 
