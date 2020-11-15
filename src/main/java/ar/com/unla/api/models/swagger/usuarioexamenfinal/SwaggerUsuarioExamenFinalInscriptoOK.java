@@ -8,7 +8,7 @@ import lombok.Data;
  * Provides an OK structure response for Swagger (Avoiding to show the errors attribute)
  */
 @Data
-public class SwaggerUsuarioExamenFinalInscriptoOK {
+public final class SwaggerUsuarioExamenFinalInscriptoOK {
 
     private List<FinalesInscriptosDTO> data;
 }

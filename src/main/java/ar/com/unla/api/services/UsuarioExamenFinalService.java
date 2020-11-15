@@ -5,7 +5,6 @@ import ar.com.unla.api.dtos.request.UsuarioExamenFinalDTO;
 import ar.com.unla.api.dtos.response.AlumnoFinalDTO;
 import ar.com.unla.api.dtos.response.AlumnoFinalFlagDTO;
 import ar.com.unla.api.dtos.response.AlumnosFinalDTO;
-import ar.com.unla.api.dtos.response.AlumnosFinalFlagDTO;
 import ar.com.unla.api.dtos.response.FinalesInscriptosDTO;
 import ar.com.unla.api.exceptions.NotFoundApiException;
 import ar.com.unla.api.exceptions.TransactionBlockedException;
@@ -109,17 +108,14 @@ public class UsuarioExamenFinalService {
         return alumnos;
     }
 
-    public AlumnosFinalFlagDTO findUsersByFinalExamWithFlag(Long idMateria) {
+    public List<AlumnoFinalFlagDTO> findUsersByFinalExamWithFlag(Long idMateria) {
         Materia materia = materiaService.findById(idMateria);
 
         List<Usuario> alumnos = usuarioService.findAllStudents();
 
-        ExamenFinal examenFinal =
-                examenFinalService.findBySubjects(idMateria, materia.getTurno().getId());
+        examenFinalService.findBySubjects(idMateria, materia.getTurno().getId());
 
-        AlumnosFinalFlagDTO alumnosFinalFlagDTO = new AlumnosFinalFlagDTO();
-        alumnosFinalFlagDTO.setExamenFinal(examenFinal);
-        alumnosFinalFlagDTO.setAlumnos(new ArrayList<>());
+        List<AlumnoFinalFlagDTO> alumnosFinal = new ArrayList<>();
 
         List<UsuarioExamenFinal> usuariosFinal =
                 usuarioExamenFinalRepository.findStudentsByFinalExam(idMateria);
@@ -129,7 +125,7 @@ public class UsuarioExamenFinalService {
                 AlumnoFinalFlagDTO alumno =
                         new AlumnoFinalFlagDTO(uex.getUsuario(), true, uex.getCalificacion(),
                                 uex.getId());
-                alumnosFinalFlagDTO.getAlumnos().add(alumno);
+                alumnosFinal.add(alumno);
             }
             boolean encontrado = false;
             if (alumnos != null && !alumnos.isEmpty()) {
@@ -144,7 +140,7 @@ public class UsuarioExamenFinalService {
                         AlumnoFinalFlagDTO alumnoNoInscripto =
                                 new AlumnoFinalFlagDTO(alumno, false, 0,
                                         null);
-                        alumnosFinalFlagDTO.getAlumnos().add(alumnoNoInscripto);
+                        alumnosFinal.add(alumnoNoInscripto);
                     }
                     encontrado = false;
                 }
@@ -156,12 +152,12 @@ public class UsuarioExamenFinalService {
                     AlumnoFinalFlagDTO alumnoNoInscripto =
                             new AlumnoFinalFlagDTO(alumno, false, 0,
                                     null);
-                    alumnosFinalFlagDTO.getAlumnos().add(alumnoNoInscripto);
+                    alumnosFinal.add(alumnoNoInscripto);
                 }
             }
         }
 
-        return alumnosFinalFlagDTO;
+        return alumnosFinal;
     }
 
     public UsuarioExamenFinal findUsuarioExamenFinal(long idMateria, long idUsuario, String turno) {

@@ -1,12 +1,12 @@
 package ar.com.unla.api.controllers;
 
 import ar.com.unla.api.dtos.request.UsuarioExamenFinalDTO;
-import ar.com.unla.api.dtos.response.AlumnosFinalFlagDTO;
+import ar.com.unla.api.dtos.response.AlumnoFinalFlagDTO;
 import ar.com.unla.api.dtos.response.FinalesInscriptosDTO;
 import ar.com.unla.api.models.database.UsuarioExamenFinal;
 import ar.com.unla.api.models.response.ApplicationResponse;
 import ar.com.unla.api.models.response.ErrorResponse;
-import ar.com.unla.api.models.swagger.usuarioexamenfinal.SwaggerAlumnosFinalOk;
+import ar.com.unla.api.models.swagger.usuarioexamenfinal.SwaggerAlumnoFinalFlagOk;
 import ar.com.unla.api.models.swagger.usuarioexamenfinal.SwaggerUsuarioExamenFinalInscriptoOK;
 import ar.com.unla.api.models.swagger.usuarioexamenfinal.SwaggerUsuarioFinalOk;
 import ar.com.unla.api.services.UsuarioExamenFinalService;
@@ -103,7 +103,7 @@ public class UsuarioExamenFinalController {
     @ApiResponses(
             value = {
                     @ApiResponse(code = 200, message = "Alumnos por examen final encontrados",
-                            response = SwaggerAlumnosFinalOk.class),
+                            response = SwaggerAlumnoFinalFlagOk.class),
                     @ApiResponse(code = 400, message = "Request incorrecta al buscar una lista de"
                             + " alumnos por examen final", response = ErrorResponse.class),
                     @ApiResponse(code = 500, message =
@@ -112,7 +112,7 @@ public class UsuarioExamenFinalController {
             }
     )
     @ResponseStatus(HttpStatus.OK)
-    public ApplicationResponse<AlumnosFinalFlagDTO> getStudentsByFinalExam(
+    public ApplicationResponse<List<AlumnoFinalFlagDTO>> getStudentsByFinalExam(
             @RequestParam(name = "idMateria")
             @NotNull(message = "El parámetro idMateria no esta informado.")
             @ApiParam(required = true) Long idMateria) {

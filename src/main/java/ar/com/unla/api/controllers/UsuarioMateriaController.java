@@ -1,12 +1,12 @@
 package ar.com.unla.api.controllers;
 
 import ar.com.unla.api.dtos.request.UsuarioMateriaDTO;
-import ar.com.unla.api.dtos.response.AlumnosMateriaFlagDTO;
+import ar.com.unla.api.dtos.response.AlumnoMateriaFlagDTO;
 import ar.com.unla.api.dtos.response.MateriasInscriptasDTO;
 import ar.com.unla.api.models.database.UsuarioMateria;
 import ar.com.unla.api.models.response.ApplicationResponse;
 import ar.com.unla.api.models.response.ErrorResponse;
-import ar.com.unla.api.models.swagger.usuariomateria.SwaggerAlumnosMateriaOK;
+import ar.com.unla.api.models.swagger.usuarioexamenfinal.SwaggerAlumnoMateriaFlagOk;
 import ar.com.unla.api.models.swagger.usuariomateria.SwaggerUsuarioMateriaOk;
 import ar.com.unla.api.models.swagger.usuariomateria.SwaggerUsuarioMateriasInscriptasOK;
 import ar.com.unla.api.services.UsuarioMateriaService;
@@ -99,7 +99,7 @@ public class UsuarioMateriaController {
     @ApiResponses(
             value = {
                     @ApiResponse(code = 200, message = "Alumnos por materia encontrados",
-                            response = SwaggerAlumnosMateriaOK.class),
+                            response = SwaggerAlumnoMateriaFlagOk.class),
                     @ApiResponse(code = 400, message = "Request incorrecta al buscar una lista de"
                             + " alumnos por materia", response = ErrorResponse.class),
                     @ApiResponse(code = 500, message =
@@ -108,7 +108,7 @@ public class UsuarioMateriaController {
             }
     )
     @ResponseStatus(HttpStatus.OK)
-    public ApplicationResponse<AlumnosMateriaFlagDTO> getStudentsBySubject(
+    public ApplicationResponse<List<AlumnoMateriaFlagDTO>> getStudentsBySubject(
             @RequestParam(name = "idMateria")
             @NotNull(message = "El parámetro idMateria no esta informado.")
             @ApiParam(required = true) Long idMateria) {

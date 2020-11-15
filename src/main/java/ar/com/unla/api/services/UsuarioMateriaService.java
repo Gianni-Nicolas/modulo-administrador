@@ -5,7 +5,6 @@ import ar.com.unla.api.dtos.request.UsuarioMateriaDTO;
 import ar.com.unla.api.dtos.response.AlumnoMateriaDTO;
 import ar.com.unla.api.dtos.response.AlumnoMateriaFlagDTO;
 import ar.com.unla.api.dtos.response.AlumnosMateriaDTO;
-import ar.com.unla.api.dtos.response.AlumnosMateriaFlagDTO;
 import ar.com.unla.api.dtos.response.MateriasInscriptasDTO;
 import ar.com.unla.api.exceptions.NotFoundApiException;
 import ar.com.unla.api.exceptions.TransactionBlockedException;
@@ -90,16 +89,14 @@ public class UsuarioMateriaService {
         return alumnos;
     }
 
-    public AlumnosMateriaFlagDTO findStudentsBySubjectWithFlag(Long idMateria) {
-        Materia materia = materiaService.findById(idMateria);
+    public List<AlumnoMateriaFlagDTO> findStudentsBySubjectWithFlag(Long idMateria) {
+        materiaService.findById(idMateria);
         List<UsuarioMateria> usuariosMateria =
                 usuarioMateriaRepository.findStudentBySubject(idMateria);
 
         List<Usuario> alumnos = usuarioService.findAllStudents();
 
-        AlumnosMateriaFlagDTO alumnosFlagDTO = new AlumnosMateriaFlagDTO();
-        alumnosFlagDTO.setMateria(materia);
-        alumnosFlagDTO.setAlumnos(new ArrayList<>());
+        List<AlumnoMateriaFlagDTO> alumnosMateria = new ArrayList<>();
 
         if (usuariosMateria != null && !usuariosMateria.isEmpty()) {
 
@@ -107,7 +104,7 @@ public class UsuarioMateriaService {
                 AlumnoMateriaFlagDTO alumnoInscripto =
                         new AlumnoMateriaFlagDTO(um.getUsuario(), true, um.getCalificacionExamen(),
                                 um.getCalificacionTps(), um.getId());
-                alumnosFlagDTO.getAlumnos().add(alumnoInscripto);
+                alumnosMateria.add(alumnoInscripto);
             }
             boolean encontrado = false;
             if (alumnos != null && !alumnos.isEmpty()) {
@@ -122,16 +119,23 @@ public class UsuarioMateriaService {
                         AlumnoMateriaFlagDTO alumnoNoInscripto =
                                 new AlumnoMateriaFlagDTO(alumno, false, 0,
                                         0, null);
-                        alumnosFlagDTO.getAlumnos().add(alumnoNoInscripto);
+                        alumnosMateria.add(alumnoNoInscripto);
                     }
                     encontrado = false;
                 }
             }
         } else {
-
+            if (alumnos != null && !alumnos.isEmpty()) {
+                for (Usuario alumno : alumnos) {
+                    AlumnoMateriaFlagDTO alumnoNoInscripto =
+                            new AlumnoMateriaFlagDTO(alumno, false, 0, 0,
+                                    null);
+                    alumnosMateria.add(alumnoNoInscripto);
+                }
+            }
         }
 
-        return alumnosFlagDTO;
+        return alumnosMateria;
     }
 
     public List<UsuarioMateria> findSubjectsByUser(Long idUsuario) {
