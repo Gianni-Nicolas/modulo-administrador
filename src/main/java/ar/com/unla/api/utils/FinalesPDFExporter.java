@@ -92,7 +92,7 @@ public class FinalesPDFExporter {
                                 " Desde: " + examenFinal.getPeriodoInscripcion().getFechaDesde()
                                         .toString() + "\n" +
                                         " Hasta: " + examenFinal.getPeriodoInscripcion()
-                                        .getFechaDesde()
+                                        .getFechaHasta()
                                         .toString();
                         datesCell.setPhrase(new Phrase(inscripcion));
                         datesCell.setPaddingTop(4);
